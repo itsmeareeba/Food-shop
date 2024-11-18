@@ -1,21 +1,35 @@
 {
   "name": "health-shop",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build": "babel src -d lib"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.0.4",
+    "@hookform/resolvers": "^3.9.1",
     "expo": "~52.0.7",
+    "expo-constants": "~17.0.3",
+    "expo-linking": "~7.0.2",
+    "expo-router": "~4.0.6",
     "expo-status-bar": "~2.0.0",
     "react": "18.3.1",
-    "react-native": "0.76.2"
+    "react-hook-form": "^7.53.2",
+    "react-native": "0.76.2",
+    "react-native-safe-area-context": "4.12.0",
+    "react-native-screens": "~4.0.0",
+    "react-native-toast-notifications": "^3.4.0",
+    "zod": "^3.23.8",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
+    "@babel/cli": "^7.25.9",
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
     "@types/react": "~18.3.12",
     "typescript": "^5.3.3"
   },
