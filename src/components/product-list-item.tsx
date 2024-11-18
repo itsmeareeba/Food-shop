@@ -2,7 +2,7 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Product } from '../../assets/types/product';
 import { Link } from 'expo-router';
-
+import { FontAwesome5 } from '@expo/vector-icons';
 export const ProductListItem = ({ product }: {product: Product}) => {
   return (
   <Link asChild href={`/product/${product.slug}`}>
@@ -12,13 +12,18 @@ export const ProductListItem = ({ product }: {product: Product}) => {
         </View>
         <View style={styles.itemTextContainer}>
             <Text style={styles.itemTitle}>{product.title}</Text>
-            <Text style={styles.itemPrice}>${product.price.toFixed(2)}</Text>
+            <View style={styles.priceRating}>
+              <Text style={styles.itemPrice}>${product.price.toFixed(2)}</Text>
+              <View style={styles.rating}>
+                <FontAwesome5 name="star" size={12} color="#FFC107" />
+                <Text style={styles.ratingText}>{product.rating}</Text>
+              </View>
+            </View>
         </View>
     </Pressable>
   </Link>
   );
 };
-
 const styles = StyleSheet.create({
     item: {
         width: '48%',
@@ -46,8 +51,23 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#888',
     },
+    priceRating: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
     itemPrice: {
-        fontSize: 14,
+         fontSize: 14,
         fontWeight: 'bold',
+    },
+    rating: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent:"space-between"
+    },
+    ratingText: {
+        fontSize: 12,
+        marginLeft: 4,
+        color: '#888',
     },
 });

@@ -1,33 +1,32 @@
 import { Category } from './types/category';
 import { PRODUCTS } from './products';
-
 export const CATEGORIES: Category[] = [
   {
-    name: 'Laptops',
-    slug: 'laptops',
+    name: 'Retail',
+    slug: 'retail',
     imageUrl:
-      'https://images.pexels.com/photos/129208/pexels-photo-129208.jpeg',
-    products: PRODUCTS.filter(product => product.category.slug === 'laptops'),
+      'https://i.ibb.co/RjBRVn2/c1.png',
+    products: PRODUCTS.filter(product => product.category.slug === 'Retail'),
   },
   {
-    name: 'Phones',
-    slug: 'phones',
+    name: 'Cheap combo',
+    slug: 'cheap combo',
     imageUrl:
-      'https://images.pexels.com/photos/40739/mobile-phone-smartphone-tablet-white-40739.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    products: PRODUCTS.filter(product => product.category.slug === 'phones'),
+      'https://i.ibb.co/TkWj0wc/c2.png',
+    products: PRODUCTS.filter(product => product.category.slug === 'Cheap combo'),
   },
   {
-    name: 'Gaming',
-    slug: 'gaming',
+    name: 'True Juice',
+    slug: 'true juice',
     imageUrl:
-      'https://images.pexels.com/photos/275033/pexels-photo-275033.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    products: PRODUCTS.filter(product => product.category.slug === 'gaming'),
+      'https://i.ibb.co/LRjxHQK/c3.png',
+    products: PRODUCTS.filter(product => product.category.slug === 'True Juice'),
   },
   {
-    name: 'Accessories',
-    slug: 'accessories',
+    name: 'Lunch Snacks',
+    slug: 'Lunch snacks',
     imageUrl:
-      'https://images.pexels.com/photos/577769/pexels-photo-577769.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+      'https://i.ibb.co/RjBRVn2/c1.png',
     products: PRODUCTS.filter(
       product => product.category.slug === 'accessories'
     ),

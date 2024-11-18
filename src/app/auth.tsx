@@ -1,137 +1,197 @@
-import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  ImageBackground,
-} from 'react-native';
+    View,
+    Text,
+    StyleSheet,
+    ImageBackground,
+    TextInput,
+    TouchableOpacity,
+  } from 'react-native';
+  import { useForm, Controller } from 'react-hook-form';
+  import * as zod from 'zod';
+  import { zodResolver } from '@hookform/resolvers/zod';
+import { Redirect, Stack } from 'expo-router';
+import { supabase } from '../lib/supabase';
+import { Toast } from 'react-native-toast-notifications';
+import { useAnimatedHeaderHeight } from '@react-navigation/native-stack';
+import { useAuth } from '../providers/auth-providers';
 
-const backgroundImage = { uri: 'https://img.freepik.com/premium-photo/top-view-online-shopping-concept-with-credit-card-smart-phone-computer-isolated-office-yellow-table-background_315337-5991.jpg?semt=ais_hybrid/600x800' }; // Replace with your AI-generated image URL
-
+  const authSchema = zod.object({
+    email: zod.string().email({ message: 'Invalid email address' }),
+    password: zod
+      .string()
+      .min(6, { message: 'Password must be at least 6 characters long' }),
+  });
+  
 export default function Auth(){
-    const [isLogin, setIsLogin] = useState(true); // Toggle between login/signup
-  const [name, setName] = useState(''); // New state for name
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const handleAuth = () => {
-    if (isLogin) {
-      if (!email || !password) {
-        Alert.alert('Error', 'Please fill in all fields');
-        return;
-      }
-      Alert.alert('Login Successful', `Email: ${email}`);
+  const {session} = useAuth();
+  if(session) return <Redirect href='/' />;
+  const { control, handleSubmit, formState} = useForm({
+    resolver: zodResolver(authSchema),
+    defaultValues:{
+      email: '',
+      password: '',
+    },
+  });
+
+  const signIn = async (data: zod.infer<typeof authSchema>) => {
+    const { error } = await supabase.auth.signInWithPassword(data);
+
+    if (error) {
+      alert(error.message);
     } else {
-      if (!name || !email || !password) {
-        Alert.alert('Error', 'Please fill in all fields');
-        return;
-      }
-      Alert.alert('Signup Successful', `Name: ${name}, Email: ${email}`);
+      Toast.show('Signed in successfully', {
+        type: 'success',
+        placement: 'top',
+        duration: 1500,
+      });
     }
   };
+
+  const signUp = async (data: zod.infer<typeof authSchema>) => {
+    const { error } = await supabase.auth.signUp(data);
+
+    if (error) {
+      alert(error.message);
+    } else {
+      Toast.show('Signed up successfully', {
+        type: 'success',
+        placement: 'top',
+        duration: 1500,
+      });
+    }
+  };
+ 
     return(
-        <ImageBackground source={backgroundImage} style={styles.container}>
-        <View style={styles.overlay}>
-          <Text style={styles.logo}>Health-Shop</Text>
-          <Text style={styles.header}>
-            {isLogin ? 'Welcome Back!' : 'Create an Account'}
-          </Text>
-          {!isLogin && ( // Show name input only for sign-up
-            <TextInput
-              style={styles.input}
-              placeholder="Name"
-              placeholderTextColor="#aaa"
-              value={name}
-              onChangeText={setName}
-            />
+        <ImageBackground source={{ uri: 'https://images.pexels.com/photos/2088170/pexels-photo-2088170.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'}}
+        style = {styles.backgroundImage}>
+          <View style = {styles.overlay} />
+          <View style = {styles.container}>
+            <Text style={styles.title}>Welcome</Text>
+            <Text style={styles.subtitle}>Please Authenticate to continue</Text>
+            <Controller control={control} name='email' render={({ field: {value, onChange,onBlur},
+               fieldState: { error }, }) => (
+              <>
+                  <TextInput
+                placeholder='Email'
+                style={styles.input}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholderTextColor='#aaa'
+                autoCapitalize='none'
+                editable={!formState.isSubmitting}
+                  />
+                {error && <Text style={styles.error}>{error.message}</Text>}
+              </>
+             )}
+          />
+
+        <Controller
+          control={control}
+          name='password'
+          render={({
+            field: { value, onChange, onBlur },
+            fieldState: { error },
+          }) => (
+            <>
+              <TextInput
+                placeholder='Password'
+                style={styles.input}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                secureTextEntry
+                placeholderTextColor='#aaa'
+                autoCapitalize='none'
+                editable={!formState.isSubmitting}
+              />
+              {error && <Text style={styles.error}>{error.message}</Text>}
+            </>
           )}
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#aaa"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#aaa"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TouchableOpacity style={styles.button} onPress={handleAuth}>
-            <Text style={styles.buttonText}>
-              {isLogin ? 'Login' : 'Signup'}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
-            <Text style={styles.switchText}>
-              {isLogin
-                ? "Don't have an account? Sign up"
-                : 'Already have an account? Log in'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
+        />
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleSubmit(signIn)}
+          disabled={formState.isSubmitting}
+        >
+          <Text style={styles.buttonText}>Sign In</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, styles.signUpButton]}
+          onPress={handleSubmit(signUp)}
+          disabled={formState.isSubmitting}
+        >
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
+          </View>
+        </ImageBackground>
     );
 };
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent overlay
-    width: '100%',
-    padding: 20,
-    borderRadius: 10,
-  },
-  logo: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
-  },
-  header: {
-    fontSize: 20,
-    color: '#555',
-    marginBottom: 20,
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  button: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#007BFF',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  switchText: {
-    color: '#007BFF',
-    marginTop: 10,
-    textDecorationLine: 'underline',
-  },
-});
+    backgroundImage: {
+      flex: 1,
+      resizeMode: 'cover',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    overlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0,0,0,0.7)',
+    },
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 16,
+      width: '100%',
+    },
+    title: {
+      fontSize: 36,
+      fontWeight: 'bold',
+      color: '#fff',
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 18,
+      color: '#ddd',
+      marginBottom: 32,
+    },
+    input: {
+      width: '90%',
+      padding: 12,
+      marginBottom: 16,
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      borderRadius: 8,
+      fontSize: 16,
+      color: '#000',
+    },
+    button: {
+      backgroundColor: '#F35C56',
+      padding: 16,
+      borderRadius: 8,
+      marginBottom: 16,
+      width: '90%',
+      alignItems: 'center',
+    },
+    signUpButton: {
+      backgroundColor: 'transparent',
+      borderColor: '#fff',
+      borderWidth: 1,
+    },
+    signUpButtonText: {
+      color: '#fff',
+    },
+    buttonText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#fff',
+    },
+    error: {
+      color: 'red',
+      fontSize: 12,
+      marginBottom: 16,
+      textAlign: 'left',
+      width: '90%',
+    },
+  });

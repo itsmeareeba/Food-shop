@@ -1,5 +1,4 @@
 import { Product } from './types/product';
-
 export const PRODUCTS: Product[] = [
   {
     id: 1,
@@ -18,6 +17,7 @@ export const PRODUCTS: Product[] = [
       slug: 'laptops',
     },
     maxQuantity: 5,
+    rating: 4.5,
   },
   {
     id: 5,
@@ -35,23 +35,7 @@ export const PRODUCTS: Product[] = [
       slug: 'laptops',
     },
     maxQuantity: 7,
-  },
-  {
-    id: 2,
-    title: 'IPhone 15',
-    slug: 'i-phone-15',
-    heroImage: require('../assets/images/i-phone-1.jpg'),
-    imagesUrl: [
-      require('../assets/images/i-phone-2.jpg'),
-      require('../assets/images/i-phone-3.jpg'),
-    ],
-    price: 999.99,
-    category: {
-      imageUrl: require('../assets/images/i-phone-1.jpg'),
-      name: 'Phones',
-      slug: 'phones',
-    },
-    maxQuantity: 10,
+    rating: 4,
   },
   {
     id: 6,
@@ -69,6 +53,7 @@ export const PRODUCTS: Product[] = [
       slug: 'phones',
     },
     maxQuantity: 12,
+    rating: 4.3,
   },
   {
     id: 3,
@@ -86,6 +71,7 @@ export const PRODUCTS: Product[] = [
       slug: 'accessories',
     },
     maxQuantity: 15,
+    rating: 4.2,
   },
   {
     id: 4,
@@ -104,6 +90,7 @@ export const PRODUCTS: Product[] = [
       slug: 'gaming',
     },
     maxQuantity: 3,
+    rating: 4.8,
   },
   {
     id: 7,
@@ -121,5 +108,6 @@ export const PRODUCTS: Product[] = [
       slug: 'gaming',
     },
     maxQuantity: 8,
+    rating: 4.6,
   },
 ];
